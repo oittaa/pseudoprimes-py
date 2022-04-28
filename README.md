@@ -2,6 +2,10 @@
 
 Test and find prime numbers.
 
+[![CI](https://github.com/oittaa/pseudoprimes-py/actions/workflows/main.yml/badge.svg)](https://github.com/oittaa/pseudoprimes-py/actions/workflows/main.yml)
+[![codecov](https://codecov.io/gh/oittaa/pseudoprimes-py/branch/main/graph/badge.svg?token=CDOIHDYMUR)](https://codecov.io/gh/oittaa/pseudoprimes-py)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 ```python
 >>> import pseudoprimes
 >>> pseudoprimes.is_prime(11)

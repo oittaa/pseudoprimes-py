@@ -3,7 +3,7 @@ from setuptools import setup, find_packages  # type: ignore
 
 NAME = "pseudoprimes"
 
-DESCRIPTION = "Find prime numbers"
+DESCRIPTION = "Test and find prime numbers"
 URL = "https://github.com/oittaa/pseudoprimes-py"
 LONG_DESCRIPTION = open(os.path.join(os.path.dirname(__file__), "README.md")).read()
 

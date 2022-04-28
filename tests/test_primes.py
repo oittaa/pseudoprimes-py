@@ -23,7 +23,8 @@ class TestPrimes(unittest.TestCase):
         self.assertTrue(pseudoprimes.is_prime(2))
         self.assertTrue(pseudoprimes.is_prime(3))
         self.assertTrue(pseudoprimes.is_prime(47))
-        self.assertTrue(pseudoprimes.is_prime(32424781))
+        self.assertTrue(pseudoprimes.is_prime(32_424_781))
+        self.assertTrue(pseudoprimes.is_prime(2_147_483_647))
         self.assertTrue(
             pseudoprimes.is_prime(
                 4547337172376300111955330758342147474062293202868155909489
@@ -38,19 +39,19 @@ class TestPrimes(unittest.TestCase):
     def test_is_prime_first_million_primes(self) -> None:
         with open("tests/primes1.txt", encoding="ascii") as file:
             for token in read_by_tokens(file):
-                self.assertTrue(pseudoprimes.is_prime(int(token)))
+                self.assertTrue(pseudoprimes.is_prime(int(token)), token)
 
     def test_not_prime(self) -> None:
         self.assertFalse(pseudoprimes.is_prime(0))
         self.assertFalse(pseudoprimes.is_prime(1))
         self.assertFalse(pseudoprimes.is_prime(-1))
-        self.assertFalse(pseudoprimes.is_prime(341531))
-        self.assertFalse(pseudoprimes.is_prime(32424581))
-        self.assertFalse(pseudoprimes.is_prime(1050535501))
-        self.assertFalse(pseudoprimes.is_prime(350269456337))
-        self.assertFalse(pseudoprimes.is_prime(55245642489451))
-        self.assertFalse(pseudoprimes.is_prime(7999252175582851))
-        self.assertFalse(pseudoprimes.is_prime(585226005592931977))
+        self.assertFalse(pseudoprimes.is_prime(341_531))
+        self.assertFalse(pseudoprimes.is_prime(32_424_581))
+        self.assertFalse(pseudoprimes.is_prime(1_050_535_501))
+        self.assertFalse(pseudoprimes.is_prime(350_269_456_337))
+        self.assertFalse(pseudoprimes.is_prime(55_245_642_489_451))
+        self.assertFalse(pseudoprimes.is_prime(7_999_252_175_582_851))
+        self.assertFalse(pseudoprimes.is_prime(585_226_005_592_931_977))
         self.assertFalse(
             pseudoprimes.is_prime(
                 4547337172376300111955330758342147474062293202868155909393
@@ -88,31 +89,40 @@ class TestPrimes(unittest.TestCase):
             3317044064679887385961981,
         ]
         for candidate in composites:
-            self.assertFalse(pseudoprimes.is_prime(candidate))
+            self.assertFalse(pseudoprimes.is_prime(candidate), candidate)
 
-    def test_just_less_than_8_bits(self) -> None:
+    def test_primes_just_less_than_8_bits(self) -> None:
         for k in [5, 15, 17, 23, 27, 29, 33, 45, 57, 59]:
-            self.assertTrue(pseudoprimes.is_prime(2**8 - k))
+            self.assertTrue(pseudoprimes.is_prime(2**8 - k), k)
 
-    def test_just_less_than_16_bits(self) -> None:
+    def test_primes_just_less_than_16_bits(self) -> None:
         for k in [15, 17, 39, 57, 87, 89, 99, 113, 117, 123]:
-            self.assertTrue(pseudoprimes.is_prime(2**16 - k))
+            self.assertTrue(pseudoprimes.is_prime(2**16 - k), k)
 
-    def test_just_less_than_32_bits(self) -> None:
+    def test_primes_just_less_than_32_bits(self) -> None:
         for k in [5, 17, 65, 99, 107, 135, 153, 185, 209, 267]:
-            self.assertTrue(pseudoprimes.is_prime(2**32 - k))
+            self.assertTrue(pseudoprimes.is_prime(2**32 - k), k)
 
-    def test_just_less_than_64_bits(self) -> None:
+    def test_primes_just_less_than_64_bits(self) -> None:
         for k in [59, 83, 95, 179, 189, 257, 279, 323, 353, 363]:
-            self.assertTrue(pseudoprimes.is_prime(2**64 - k))
+            self.assertTrue(pseudoprimes.is_prime(2**64 - k), k)
 
-    def test_just_less_than_128_bits(self) -> None:
+    def test_primes_just_less_than_128_bits(self) -> None:
         for k in [159, 173, 233, 237, 275, 357, 675, 713, 797, 1193]:
-            self.assertTrue(pseudoprimes.is_prime(2**128 - k))
+            self.assertTrue(pseudoprimes.is_prime(2**128 - k), k)
 
-    def test_just_less_than_256_bits(self) -> None:
+    def test_primes_just_less_than_256_bits(self) -> None:
         for k in [189, 357, 435, 587, 617, 923, 1053, 1299, 1539, 1883]:
-            self.assertTrue(pseudoprimes.is_prime(2**256 - k))
+            self.assertTrue(pseudoprimes.is_prime(2**256 - k), k)
+
+    def test_pseudoprimes_base_97(self) -> None:
+        """https://oeis.org/A020225"""
+        nums = [4, 6, 8, 12, 16, 21, 24, 32, 48, 49, 66, 96, 105, 147, 176, 186, 231]
+        nums += [245, 341, 344, 469, 481, 496, 561, 637, 645, 651, 833, 946, 949, 973]
+        nums += [1056, 1065, 1068, 1105, 1128, 1729, 1813, 1891, 2046, 2047, 2465, 2701]
+        nums += [2821, 2976, 3053, 3277, 3283, 3577, 4187]
+        for k in nums:
+            self.assertFalse(pseudoprimes.is_prime(97 ** (k - 1)), k)
 
     def test_next_prime(self) -> None:
         self.assertEqual(pseudoprimes.next_prime(0), 2)

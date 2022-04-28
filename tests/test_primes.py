@@ -6,6 +6,7 @@ https://primes.utm.edu/lists/small/millions/
 
 
 import unittest
+from unittest.mock import patch
 
 import pseudoprimes
 
@@ -124,6 +125,11 @@ class TestPrimes(unittest.TestCase):
         for k in nums:
             self.assertFalse(pseudoprimes.is_prime(97 ** (k - 1)), k)
 
+    @patch("pseudoprimes.pseudoprimes._KNOWN_PRIMES", (2,))
+    def test_carmichael_number(self) -> None:
+        """Removing most known primes forces a non‐trivial factor test"""
+        self.assertFalse(pseudoprimes.is_prime(561))
+
     def test_next_prime(self) -> None:
         self.assertEqual(pseudoprimes.next_prime(0), 2)
         self.assertEqual(pseudoprimes.next_prime(2), 3)
@@ -144,6 +150,22 @@ class TestPrimes(unittest.TestCase):
             pseudoprimes.prev_prime(1)
         with self.assertRaises(ValueError):
             pseudoprimes.prev_prime(2)
+
+    def test_gen_prime(self) -> None:
+        self.assertIn(pseudoprimes.gen_prime(2), (2, 3))
+        results = set()
+        for _ in range(10):
+            prime = pseudoprimes.gen_prime(1024)
+            self.assertGreaterEqual(prime, 2**1023)
+            self.assertLess(prime, 2**1024)
+            results.add(prime)
+        self.assertEqual(len(results), 10)
+
+    def test_gen_prime_invalid_arguments(self) -> None:
+        with self.assertRaises(ValueError):
+            pseudoprimes.gen_prime(-10)
+        with self.assertRaises(ValueError):
+            pseudoprimes.gen_prime(1)
 
 
 if __name__ == "__main__":

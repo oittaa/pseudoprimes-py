@@ -3,15 +3,15 @@
 Test and find prime numbers.
 
 ```python
-import pseudoprimes
-pseudoprimes.is_prime(11)
->> True
-
-pseudoprimes.next_prime(3)
->> 5
-
-pseudoprimes.prev_prime(100)
->> 97
+>>> import pseudoprimes
+>>> pseudoprimes.is_prime(11)
+True
+>>> pseudoprimes.is_prime(1022117)
+False
+>>> pseudoprimes.next_prime(3)
+5
+>>> pseudoprimes.prev_prime(100)
+97
 ```
 
 ## Installation
@@ -22,4 +22,6 @@ pip install pseudoprimes
 
 ## Probabilistic or deterministic?
 
-The used Miller–Rabin algorithm is deterministic for values until 3317044064679887385961981. Numbers larger than that are tested using a probabilistic primality test.
+The used Miller–Rabin algorithm[^1] is deterministic for values up to 3,317,044,064,679,887,385,961,981. Numbers larger than that are tested using a probabilistic primality test.
+
+[^1]: https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test#Deterministic_variants

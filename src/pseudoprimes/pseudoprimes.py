@@ -61,7 +61,7 @@ def is_prime(n: int, precision_for_huge_n: int = 16) -> bool:
     likely a prime.
     Arguments:
         {n} integer -- Number to test.
-        {precision_for_huge_n} integer -- Number or.
+        {precision_for_huge_n} integer -- Number of witness tests for huge primes.
     Returns:
         True -- If {n} is (probably) a prime.
         False -- If {n} is not a prime.
@@ -78,7 +78,12 @@ def is_prime(n: int, precision_for_huge_n: int = 16) -> bool:
         if n < best_solution:
             break
     else:
-        bases = _KNOWN_PRIMES[:precision_for_huge_n]
+        precision_for_huge_n = max(precision_for_huge_n, 16)
+        num_primes = precision_for_huge_n // 2
+        temp = []
+        for _ in range(precision_for_huge_n - num_primes):
+            temp.append(_RAND.randrange(2, n - 1))
+        bases = _KNOWN_PRIMES[:num_primes] + tuple(temp)
 
     for a in bases:
         a = a % n

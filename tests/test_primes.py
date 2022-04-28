@@ -92,6 +92,19 @@ class TestPrimes(unittest.TestCase):
         for candidate in composites:
             self.assertFalse(pseudoprimes.is_prime(candidate), candidate)
 
+    def test_adversarial_pseudoprime(self) -> None:
+        """https://eprint.iacr.org/2018/749.pdf"""
+        p1 = 2**1344 * 0x0000000000000000000000000000083DDA18EB04A7597CA3
+        p1 += 2**1152 * 0xC6BC877DF8A08EEC6725FA0832CBA270C42ADC358BC0CF50
+        p1 += 2**960 * 0xC82CB10F2733C3FB8875231FC1498A7B14CB675FAC1BF3C5
+        p1 += 2**768 * 0x127A76FC11E5D20E27940C95CEBA671FE1C4232250B74CBD
+        p1 += 2**576 * 0xF8448C90321513324C0681AFB4BA003353B1AFB0F1E8B91C
+        p1 += 2**384 * 0x60AF672A5A6F4D06DD0070A4BC74E425F3EAE90379E57754
+        p1 += 2**192 * 0x82D26E80E247464A4BB817DFCF7572F89F8B9CACD059B584
+        p1 += 0x0E4389C8AF84F6A6EA15A3EA5D62CB994B082731BA4CDE73
+        n = p1 * (1013 * (p1 - 1) + 1) * (2053 * (p1 - 1) + 1)
+        self.assertFalse(pseudoprimes.is_prime(n, 1))
+
     def test_primes_just_less_than_8_bits(self) -> None:
         for k in [5, 15, 17, 23, 27, 29, 33, 45, 57, 59]:
             self.assertTrue(pseudoprimes.is_prime(2**8 - k), k)

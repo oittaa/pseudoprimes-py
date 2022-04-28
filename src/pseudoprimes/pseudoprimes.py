@@ -3,17 +3,28 @@ https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test
 https://rosettacode.org/wiki/Miller%E2%80%93Rabin_primality_test
 """
 
-# Returns exact according to http://primes.utm.edu/prove/prove2_3.html
+# Returns exact according to https://miller-rabin.appspot.com/
 _DETERMINISTIC_SOLUTIONS = (
-    (1_373_653, (2, 3)),
-    (9_080_191, (31, 73)),
-    (4_759_123_141, (2, 7, 61)),
-    (1_122_004_669_633, (2, 13, 23, 1662803)),
-    (2_152_302_898_747, (2, 3, 5, 7, 11)),
-    (3_474_749_660_383, (2, 3, 5, 7, 11, 13)),
-    (341_550_071_728_321, (2, 3, 5, 7, 11, 13, 17)),
-    # https://doi.org/10.1090%2FS0025-5718-2014-02830-5
-    (3_825_123_056_546_413_051, (2, 3, 5, 7, 11, 13, 17, 19, 23)),
+    (341531, (9345883071009581737,)),
+    (1050535501, (336781006125, 9639812373923155)),
+    (350269456337, (4230279247111683200, 14694767155120705706, 16641139526367750375)),
+    (55245642489451, (2, 141889084524735, 1199124725622454117, 11096072698276303650)),
+    (
+        7999252175582851,
+        (2, 4130806001517, 149795463772692060, 186635894390467037, 3967304179347715805),
+    ),
+    (
+        585226005592931977,
+        (
+            2,
+            123635709730000,
+            9233062284813009,
+            43835965440333360,
+            761179012939631437,
+            1263739024124850375,
+        ),
+    ),
+    (18446744073709551616, (2, 325, 9375, 28178, 450775, 9780504, 1795265022)),
     # https://ui.adsabs.harvard.edu/abs/2015arXiv150900864S
     (318_665_857_834_031_151_167_461, (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37)),
     (
@@ -60,23 +71,29 @@ def is_prime(n: int, precision_for_huge_n: int = 16) -> bool:
 
     for best_solution, bases in _DETERMINISTIC_SOLUTIONS:
         if n < best_solution:
-            return all(_witness(a, d, n, s) for a in bases)
+            break
+    else:
+        bases = _KNOWN_PRIMES[:precision_for_huge_n]
 
-    # otherwise
-    return all(_witness(a, d, n, s) for a in _KNOWN_PRIMES[:precision_for_huge_n])
+    for a in bases:
+        a = a % n
+        if a != 0 and not _witness(a, d, n, s):
+            return False
+    return True
 
 
 def _witness(a: int, d: int, n: int, s: int) -> bool:
     x = pow(a, d, n)
-    while s:
-        y = (x * x) % n
-        if y == 1 and x != 1 and x != n - 1:
+    if x in (1, n - 1):
+        return True
+    for _ in range(s - 1):
+        y = pow(x, 2, n)
+        if y == 1:
             return False
         x = y
-        s = s - 1
-    if y != 1:
-        return False
-    return True
+        if x == n - 1:
+            return True
+    return False
 
 
 def next_prime(n: int) -> int:

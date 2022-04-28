@@ -3,6 +3,9 @@ https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test
 https://rosettacode.org/wiki/Miller%E2%80%93Rabin_primality_test
 """
 
+import secrets
+
+
 # Returns exact according to https://miller-rabin.appspot.com/
 _DETERMINISTIC_SOLUTIONS = (
     (341531, (9345883071009581737,)),
@@ -48,6 +51,8 @@ __P += [947, 953, 967, 971, 977, 983, 991, 997]
 _KNOWN_PRIMES = tuple(__P)
 del __P
 
+_RAND = secrets.SystemRandom()
+
 
 def is_prime(n: int, precision_for_huge_n: int = 16) -> bool:
     """
@@ -83,14 +88,18 @@ def is_prime(n: int, precision_for_huge_n: int = 16) -> bool:
 
 
 def _witness(a: int, d: int, n: int, s: int) -> bool:
+    """
+    Returns:
+        True -- If {n} is probably a prime.
+        False -- If {n} is definitely not a prime.
+    """
     x = pow(a, d, n)
     if x in (1, n - 1):
         return True
-    for _ in range(s - 1):
-        y = pow(x, 2, n)
-        if y == 1:
+    for _ in range(1, s):
+        x = pow(x, 2, n)
+        if x == 1:
             return False
-        x = y
         if x == n - 1:
             return True
     return False
@@ -135,3 +144,24 @@ def prev_prime(n: int) -> int:
         if is_prime(number):
             return number
         number -= 2
+
+
+def gen_prime(bits: int) -> int:
+    """
+    Returns a prime. bits is the desired length of the prime.
+    Arguments:
+        {bits} integer -- Integer number
+    Raises:
+        ValueError -- Wrong value for {bits} parameter, must be greater than 1.
+    Returns:
+        integer -- The generated prime.
+    """
+    if bits < 2:
+        raise ValueError(
+            "gen_prime() expects parameter bits to be greater than 1. "
+            "Given: " + str(bits) + "."
+        )
+    while True:
+        value = _RAND.randrange(2 ** (bits - 1), 2**bits)
+        if is_prime(value, 64):
+            return value

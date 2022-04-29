@@ -44,32 +44,32 @@ def is_strong_lucas_prp(n: int) -> bool:
     return False
 
 
-def jacobi_symbol(m: int, n: int) -> int:  # noqa: C901
+def jacobi_symbol(k: int, n: int) -> int:
     """
-    Returns the Jacobi symbol (m / n).
+    Returns the Jacobi symbol (k / n).
+    https://en.wikipedia.org/wiki/Jacobi_symbol
     """
     if n < 0 or not n % 2:
         raise ValueError("n should be an odd positive integer")
-    if m < 0 or m > n:
-        m %= n
-    if not m:
+    k %= n
+    if not k:
         return int(n == 1)
-    if n == 1 or m == 1:
+    if n == 1 or k == 1:
         return 1
-    if math.gcd(m, n) != 1:
+    if math.gcd(k, n) != 1:
         return 0
 
-    j = 1
-    while m != 0:
-        while m % 2 == 0 and m > 0:
-            m >>= 1
+    result = 1
+    while k != 0:
+        while k % 2 == 0 and k > 0:
+            k >>= 1
             if n % 8 in [3, 5]:
-                j = -j
-        m, n = n, m
-        if m % 4 == n % 4 == 3:
-            j = -j
-        m %= n
-    return j if n == 1 else 0
+                result = -result
+        k, n = n, k
+        if k % 4 == n % 4 == 3:
+            result = -result
+        k %= n
+    return result if n == 1 else 0
 
 
 def is_square(n: int) -> bool:

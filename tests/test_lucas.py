@@ -23,7 +23,7 @@ class TestLucas(unittest.TestCase):
         self.assertEqual(lucas.jacobi_symbol(60, 121), 1)
         self.assertEqual(lucas.jacobi_symbol(0, 3), 0)
         self.assertEqual(lucas.jacobi_symbol(1, 3), 1)
-        self.assertEqual(lucas.jacobi_symbol(3, 3), 0)
+        self.assertEqual(lucas.jacobi_symbol(3, 9), 0)
         with self.assertRaises(ValueError):
             lucas.jacobi_symbol(4, 2)
 

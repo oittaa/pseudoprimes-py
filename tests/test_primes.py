@@ -4,7 +4,6 @@ Test with known values
 
 
 import unittest
-from unittest.mock import patch
 
 import pseudoprimes
 
@@ -199,24 +198,32 @@ class TestPrimes(unittest.TestCase):
         for k in nums:
             self.assertFalse(pseudoprimes.is_prime(97 ** (k - 1)), k)
 
-    @patch("pseudoprimes.pseudoprimes._KNOWN_PRIMES", (2,))
-    def test_carmichael_number(self) -> None:
-        """
-        Removing most known primes forces a non‐trivial factor test
-        """
-        self.assertFalse(pseudoprimes.is_prime(561))
-
     def test_next_prime(self) -> None:
         self.assertEqual(pseudoprimes.next_prime(0), 2)
         self.assertEqual(pseudoprimes.next_prime(2), 3)
         self.assertEqual(pseudoprimes.next_prime(3), 5)
         self.assertEqual(pseudoprimes.next_prime(5), 7)
+        self.assertEqual(pseudoprimes.next_prime(8), 11)
+        self.assertEqual(pseudoprimes.next_prime(24), 29)
+        self.assertEqual(
+            [(i, pseudoprimes.next_prime(i)) for i in range(10, 15)],
+            [(10, 11), (11, 13), (12, 13), (13, 17), (14, 17)],
+        )
+        self.assertEqual(
+            [(i, pseudoprimes.next_prime(i)) for i in range(65, 100, 6)],
+            [(65, 67), (71, 73), (77, 79), (83, 89), (89, 97), (95, 97)],
+        )
         self.assertEqual(pseudoprimes.next_prime(2**32 - 266), 2**32 - 209)
 
     def test_prev_prime(self) -> None:
         self.assertEqual(pseudoprimes.prev_prime(3), 2)
+        self.assertEqual(pseudoprimes.prev_prime(8), 7)
         self.assertEqual(pseudoprimes.prev_prime(10), 7)
         self.assertEqual(pseudoprimes.prev_prime(100), 97)
+        self.assertEqual(
+            [(i, pseudoprimes.prev_prime(i)) for i in range(10, 15)],
+            [(10, 7), (11, 7), (12, 11), (13, 11), (14, 13)],
+        )
         self.assertEqual(pseudoprimes.prev_prime(2**64 - 190), 2**64 - 257)
 
     def test_prev_prime_invalid_arguments(self) -> None:

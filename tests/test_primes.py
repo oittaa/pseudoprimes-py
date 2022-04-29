@@ -36,11 +36,7 @@ class TestPrimes(unittest.TestCase):
                 643808006803554439230129854961492699151386107534013432918073439524138264842370630061369715394739134090922937332590384720397133335969549256322620979036686633213903952966175107096769180017646161851573147596390153  # noqa: E501
             )
         )
-
-    def test_is_prime_first_million_primes(self) -> None:
-        with open("tests/primes1.txt", encoding="ascii") as file:
-            for token in read_by_tokens(file):
-                self.assertTrue(pseudoprimes.is_prime(int(token)), token)
+        self.assertTrue(pseudoprimes.is_prime(10**2000 + 4561))
 
     def test_not_prime(self) -> None:
         self.assertFalse(pseudoprimes.is_prime(0))
@@ -103,7 +99,7 @@ class TestPrimes(unittest.TestCase):
         p1 += 2**192 * 0x82D26E80E247464A4BB817DFCF7572F89F8B9CACD059B584
         p1 += 0x0E4389C8AF84F6A6EA15A3EA5D62CB994B082731BA4CDE73
         n = p1 * (1013 * (p1 - 1) + 1) * (2053 * (p1 - 1) + 1)
-        self.assertFalse(pseudoprimes.is_prime(n, 1))
+        self.assertFalse(pseudoprimes.is_prime(n))
 
     def test_primes_just_less_than_8_bits(self) -> None:
         for k in [5, 15, 17, 23, 27, 29, 33, 45, 57, 59]:

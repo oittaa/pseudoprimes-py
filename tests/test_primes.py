@@ -1,7 +1,5 @@
 """
-https://oeis.org/A014233
-https://primes.utm.edu/lists/2small/0bit.html
-https://primes.utm.edu/lists/small/millions/
+Test with known values
 """
 
 
@@ -18,7 +16,9 @@ def read_by_tokens(fileobj):
 
 
 class TestPrimes(unittest.TestCase):
-    """Test with known values"""
+    """
+    Test with known values
+    """
 
     def test_is_prime_known(self) -> None:
         self.assertTrue(pseudoprimes.is_prime(2))
@@ -69,7 +69,10 @@ class TestPrimes(unittest.TestCase):
         self.assertFalse(pseudoprimes.is_prime((2**128 - 159) * (2**128 - 173)))
         self.assertFalse(pseudoprimes.is_prime((2**256 - 189) * (2**256 - 357)))
 
-    def test_a014233(self) -> None:
+    def test_a014233_miller_rabin_composites(self) -> None:
+        """
+        https://oeis.org/A014233
+        """
         composites = [
             2047,
             1373653,
@@ -88,8 +91,53 @@ class TestPrimes(unittest.TestCase):
         for candidate in composites:
             self.assertFalse(pseudoprimes.is_prime(candidate), candidate)
 
+    def test_a217255_strong_lucas_pseudoprimes(self) -> None:
+        """
+        https://oeis.org/A217255
+        """
+        composites = [
+            5459,
+            5777,
+            10877,
+            16109,
+            18971,
+            22499,
+            24569,
+            25199,
+            40309,
+            58519,
+            75077,
+            97439,
+            100127,
+            113573,
+            115639,
+            130139,
+            155819,
+            158399,
+            161027,
+            162133,
+            176399,
+            176471,
+            189419,
+            192509,
+            197801,
+            224369,
+            230691,
+            231703,
+            243629,
+            253259,
+            268349,
+            288919,
+            313499,
+            324899,
+        ]
+        for candidate in composites:
+            self.assertFalse(pseudoprimes.is_prime(candidate), candidate)
+
     def test_adversarial_pseudoprime(self) -> None:
-        """https://eprint.iacr.org/2018/749.pdf"""
+        """
+        https://eprint.iacr.org/2018/749.pdf
+        """
         p1 = 2**1344 * 0x0000000000000000000000000000083DDA18EB04A7597CA3
         p1 += 2**1152 * 0xC6BC877DF8A08EEC6725FA0832CBA270C42ADC358BC0CF50
         p1 += 2**960 * 0xC82CB10F2733C3FB8875231FC1498A7B14CB675FAC1BF3C5
@@ -102,6 +150,9 @@ class TestPrimes(unittest.TestCase):
         self.assertFalse(pseudoprimes.is_prime(n))
 
     def test_primes_just_less_than_8_bits(self) -> None:
+        """
+        https://primes.utm.edu/lists/2small/0bit.html
+        """
         for k in [5, 15, 17, 23, 27, 29, 33, 45, 57, 59]:
             self.assertTrue(pseudoprimes.is_prime(2**8 - k), k)
 
@@ -126,7 +177,9 @@ class TestPrimes(unittest.TestCase):
             self.assertTrue(pseudoprimes.is_prime(2**256 - k), k)
 
     def test_pseudoprimes_base_97(self) -> None:
-        """https://oeis.org/A020225"""
+        """
+        https://oeis.org/A020225
+        """
         nums = [4, 6, 8, 12, 16, 21, 24, 32, 48, 49, 66, 96, 105, 147, 176, 186, 231]
         nums += [245, 341, 344, 469, 481, 496, 561, 637, 645, 651, 833, 946, 949, 973]
         nums += [1056, 1065, 1068, 1105, 1128, 1729, 1813, 1891, 2046, 2047, 2465, 2701]
@@ -136,7 +189,9 @@ class TestPrimes(unittest.TestCase):
 
     @patch("pseudoprimes.pseudoprimes._KNOWN_PRIMES", (2,))
     def test_carmichael_number(self) -> None:
-        """Removing most known primes forces a non‐trivial factor test"""
+        """
+        Removing most known primes forces a non‐trivial factor test
+        """
         self.assertFalse(pseudoprimes.is_prime(561))
 
     def test_next_prime(self) -> None:

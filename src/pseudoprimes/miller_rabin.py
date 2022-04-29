@@ -1,7 +1,7 @@
 """
 https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test
 """
-BEST_SOLUTION = 3_317_044_064_679_887_385_961_981
+MAX_DETERMINISTIC = 3_317_044_064_679_887_385_961_981
 
 # Returns exact according to https://miller-rabin.appspot.com/
 _DETERMINISTIC_SOLUTIONS = (

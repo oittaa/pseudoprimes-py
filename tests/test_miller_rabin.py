@@ -17,6 +17,13 @@ class TestMillerRabin(unittest.TestCase):
         self.assertFalse(miller_rabin.is_miller_rabin_prp(9))
         self.assertFalse(miller_rabin.is_miller_rabin_prp(1))
 
+    def test_carmichael_number(self) -> None:
+        """
+        Carmichael numbers.
+        """
+        self.assertFalse(miller_rabin.is_miller_rabin_prp(561))
+        self.assertFalse(miller_rabin.is_miller_rabin_prp(8911))
+
 
 if __name__ == "__main__":
     unittest.main()

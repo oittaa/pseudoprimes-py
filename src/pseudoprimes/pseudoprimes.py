@@ -1,40 +1,12 @@
 """
-https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test
-https://rosettacode.org/wiki/Miller%E2%80%93Rabin_primality_test
+Test and find prime numbers.
 """
 
 import secrets
+from . import lucas
+from . import miller_rabin
 
-
-# Returns exact according to https://miller-rabin.appspot.com/
-_DETERMINISTIC_SOLUTIONS = (
-    (341531, (9345883071009581737,)),
-    (1050535501, (336781006125, 9639812373923155)),
-    (350269456337, (4230279247111683200, 14694767155120705706, 16641139526367750375)),
-    (55245642489451, (2, 141889084524735, 1199124725622454117, 11096072698276303650)),
-    (
-        7999252175582851,
-        (2, 4130806001517, 149795463772692060, 186635894390467037, 3967304179347715805),
-    ),
-    (
-        585226005592931977,
-        (
-            2,
-            123635709730000,
-            9233062284813009,
-            43835965440333360,
-            761179012939631437,
-            1263739024124850375,
-        ),
-    ),
-    (18446744073709551616, (2, 325, 9375, 28178, 450775, 9780504, 1795265022)),
-    # https://ui.adsabs.harvard.edu/abs/2015arXiv150900864S
-    (318_665_857_834_031_151_167_461, (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37)),
-    (
-        3_317_044_064_679_887_385_961_981,
-        (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41),
-    ),
-)
+_RAND = secrets.SystemRandom()
 
 __P = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67]
 __P += [71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139]
@@ -51,17 +23,17 @@ __P += [947, 953, 967, 971, 977, 983, 991, 997]
 _KNOWN_PRIMES = tuple(__P)
 del __P
 
-_RAND = secrets.SystemRandom()
 
-
-def is_prime(n: int, precision_for_huge_n: int = 16) -> bool:
+def is_prime(n: int) -> bool:
     """
     A return value of False means n is certainly not prime. A return value of
     True means n is a prime unless it's a huge number, then it's just very
     likely a prime.
+
+    https://en.wikipedia.org/wiki/Baillie-PSW_primality_test
+
     Arguments:
         {n} integer -- Number to test.
-        {precision_for_huge_n} integer -- Number of witness tests for huge primes.
     Returns:
         True -- If {n} is (probably) a prime.
         False -- If {n} is not a prime.
@@ -70,44 +42,10 @@ def is_prime(n: int, precision_for_huge_n: int = 16) -> bool:
         return True
     if n < 2 or any((n % p) == 0 for p in _KNOWN_PRIMES):
         return False
-    d, s = n >> 1, 1
-    while d & 1 == 0:
-        d, s = d >> 1, s + 1
 
-    for best_solution, bases in _DETERMINISTIC_SOLUTIONS:
-        if n < best_solution:
-            break
-    else:
-        precision_for_huge_n = max(precision_for_huge_n, 16)
-        num_primes = precision_for_huge_n // 2
-        temp = []
-        for _ in range(precision_for_huge_n - num_primes):
-            temp.append(_RAND.randrange(2, n - 1))
-        bases = _KNOWN_PRIMES[:num_primes] + tuple(temp)
-
-    for a in bases:
-        a = a % n
-        if a != 0 and not _witness(a, d, n, s):
-            return False
-    return True
-
-
-def _witness(a: int, d: int, n: int, s: int) -> bool:
-    """
-    Returns:
-        True -- If {n} is probably a prime.
-        False -- If {n} is definitely not a prime.
-    """
-    x = pow(a, d, n)
-    if x in (1, n - 1):
-        return True
-    for _ in range(1, s):
-        x = pow(x, 2, n)
-        if x == 1:
-            return False
-        if x == n - 1:
-            return True
-    return False
+    return miller_rabin.is_miller_rabin_prp(n) and (
+        n < miller_rabin.BEST_SOLUTION or lucas.is_strong_lucas_prp(n)
+    )
 
 
 def next_prime(n: int) -> int:
@@ -168,5 +106,5 @@ def gen_prime(bits: int) -> int:
         )
     while True:
         value = _RAND.randrange(2 ** (bits - 1), 2**bits)
-        if is_prime(value, 64):
+        if is_prime(value):
             return value

@@ -151,7 +151,11 @@ def gen_prime(bits: int) -> int:
             "gen_prime() expects parameter bits to be greater than 1. "
             "Given: " + str(bits) + "."
         )
+    if bits == 2:
+        return _RAND.randrange(2, 4)
     while True:
         value = _RAND.randrange(1 << (bits - 1), 1 << bits)
+        if value % 2 == 0:
+            value += 1
         if is_prime(value):
             return value

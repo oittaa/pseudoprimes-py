@@ -3,23 +3,10 @@ Test and find prime numbers.
 """
 
 import secrets
-from . import lucas
-from . import miller_rabin
+
+from . import lucas, miller_rabin, constants
 
 _RAND = secrets.SystemRandom()
-
-__P = [53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131]
-__P += [137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211]
-__P += [223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293]
-__P += [307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389]
-__P += [397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479]
-__P += [487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587]
-__P += [593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673]
-__P += [677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773]
-__P += [787, 797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881]
-__P += [883, 887, 907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997]
-_KNOWN_PRIMES = tuple(__P)
-del __P
 
 
 def is_prime(n: int) -> bool:
@@ -68,12 +55,16 @@ def is_prime(n: int) -> bool:
     if n <= 23001:
         return pow(2, n, n) == 2 and n not in (7957, 8321, 13747, 18721, 19951)
 
-    for p in _KNOWN_PRIMES:
+    # Testing with known primes under 1000 speeds up the average test time by
+    # 50% on 2048 bit numbers.
+    for p in constants.KNOWN_PRIMES:
         if n % p == 0:
             return False
 
+    # Deterministic Miller-Rabin for numbers < 2^81 does not need strong
+    # Lucas compositeness testing.
     return miller_rabin.is_miller_rabin_prp(n) and (
-        n < miller_rabin.MAX_DETERMINISTIC or lucas.is_strong_lucas_prp(n)
+        n < constants.MAX_DETERMINISTIC or lucas.is_strong_lucas_prp(n)
     )
 
 
@@ -161,6 +152,6 @@ def gen_prime(bits: int) -> int:
             "Given: " + str(bits) + "."
         )
     while True:
-        value = _RAND.randrange(2 ** (bits - 1), 2**bits)
+        value = _RAND.randrange(1 << (bits - 1), 1 << bits)
         if is_prime(value):
             return value

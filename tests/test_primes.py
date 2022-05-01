@@ -249,7 +249,7 @@ class TestPrimes(unittest.TestCase):
     def test_gen_prime_small(self) -> None:
         results = set()
         for _ in range(100):
-            prime = pseudoprimes.gen_prime(2)
+            prime = pseudoprimes.get_prime(2)
             self.assertIn(prime, (2, 3))
             results.add(prime)
         self.assertEqual(len(results), 2)
@@ -257,7 +257,7 @@ class TestPrimes(unittest.TestCase):
     def test_gen_prime_large(self) -> None:
         results = set()
         for _ in range(10):
-            prime = pseudoprimes.gen_prime(1024)
+            prime = pseudoprimes.get_prime(1024)
             self.assertGreater(prime, 2**1023)
             self.assertLess(prime, 2**1024)
             results.add(prime)
@@ -265,9 +265,9 @@ class TestPrimes(unittest.TestCase):
 
     def test_gen_prime_invalid_arguments(self) -> None:
         with self.assertRaises(ValueError):
-            pseudoprimes.gen_prime(-10)
+            pseudoprimes.get_prime(-10)
         with self.assertRaises(ValueError):
-            pseudoprimes.gen_prime(1)
+            pseudoprimes.get_prime(1)
 
 
 if __name__ == "__main__":

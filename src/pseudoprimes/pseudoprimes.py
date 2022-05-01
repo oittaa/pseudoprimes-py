@@ -147,7 +147,7 @@ def prev_prime(n: int) -> int:
         n -= 4
 
 
-def gen_prime(bits: int) -> int:
+def get_prime(bits: int) -> int:
     """
     Returns a prime. bits is the desired length of the prime.
     Arguments:
@@ -165,8 +165,6 @@ def gen_prime(bits: int) -> int:
     if bits == 2:
         return _RAND.randrange(2, 4)
     while True:
-        value = _RAND.randrange(1 << (bits - 1), 1 << bits)
-        if value % 2 == 0:
-            value += 1
+        value = _RAND.randrange(1 << (bits - 1), 1 << bits) | 1
         if is_prime(value):
             return value

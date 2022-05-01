@@ -157,6 +157,50 @@ class TestPrimes(unittest.TestCase):
         for candidate in composites:
             self.assertFalse(pseudoprimes.is_prime(candidate), candidate)
 
+    def test_a217719_extra_strong_lucas_pseudoprimes(self) -> None:
+        """
+        https://oeis.org/A217719
+        """
+        composites = [
+            989,
+            3239,
+            5777,
+            10877,
+            27971,
+            29681,
+            30739,
+            31631,
+            39059,
+            72389,
+            73919,
+            75077,
+            100127,
+            113573,
+            125249,
+            137549,
+            137801,
+            153931,
+            155819,
+            161027,
+            162133,
+            189419,
+            218321,
+            231703,
+            249331,
+            370229,
+            429479,
+            430127,
+            459191,
+            473891,
+            480689,
+            600059,
+            621781,
+            632249,
+            635627,
+        ]
+        for candidate in composites:
+            self.assertFalse(pseudoprimes.is_prime(candidate), candidate)
+
     def test_adversarial_pseudoprime(self) -> None:
         """
         https://eprint.iacr.org/2018/749.pdf

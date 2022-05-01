@@ -32,7 +32,7 @@ def is_extra_strong_lucas_prp(n: int) -> bool:
     """
     if n == 2:
         return True
-    if n < 2 or (n % 2) == 0 or is_square(n):
+    if n < 2 or n & 1 == 0 or is_square(n):
         return False
 
     D, P, Q = _lucas_extrastrong_params(n)
@@ -68,7 +68,7 @@ def is_strong_lucas_prp(n: int) -> bool:
     """
     if n == 2:
         return True
-    if n < 2 or (n % 2) == 0 or is_square(n):
+    if n < 2 or n & 1 == 0 or is_square(n):
         return False
 
     D, P, Q = _lucas_selfridge_params(n)
@@ -97,7 +97,7 @@ def jacobi_symbol(k: int, n: int) -> int:
     Returns the Jacobi symbol (k / n).
     https://en.wikipedia.org/wiki/Jacobi_symbol
     """
-    if n < 0 or not n % 2:
+    if n < 0 or n & 1 == 0:
         raise ValueError("n should be an odd positive integer")
     k %= n
     if not k:
@@ -109,7 +109,7 @@ def jacobi_symbol(k: int, n: int) -> int:
 
     result = 1
     while k != 0:
-        while k % 2 == 0 and k > 0:
+        while k & 1 == 0 and k > 0:
             k >>= 1
             if n % 8 in (3, 5):
                 result = -result
@@ -117,7 +117,7 @@ def jacobi_symbol(k: int, n: int) -> int:
         if k % 4 == n % 4 == 3:
             result = -result
         k %= n
-    return result if n == 1 else 0
+    return result
 
 
 def is_square(n: int) -> bool:

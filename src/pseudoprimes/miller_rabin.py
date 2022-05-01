@@ -14,7 +14,7 @@ def is_miller_rabin_prp(n: int, bases: Sequence[int]) -> bool:
 
     if n == 2:
         return True
-    if n < 2 or (n % 2) == 0:
+    if n < 2 or n & 1 == 0:
         return False
     d, s = n >> 1, 1
     while d & 1 == 0:

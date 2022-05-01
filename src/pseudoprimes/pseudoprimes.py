@@ -3,21 +3,22 @@ Test and find prime numbers.
 """
 
 import secrets
+from typing import Union
 
-from . import lucas, miller_rabin, constants
+from . import baillie_psw, constants, miller_rabin
 
 _RAND = secrets.SystemRandom()
 
 
 def is_prime(n: int) -> bool:
     """
-    Test if n is a prime number (True) or not (False). For n < 2^81 the
+    Test if n is a prime number (True) or not (False). For n ~2^81 the
     answer is definitive; larger n values have a small probability of actually
     being pseudoprimes.
 
     For small numbers, a set of deterministic Miller-Rabin tests are performed
     with bases that are known to have no counterexamples in their range.
-    Finally if the number is larger than 2^81, a strong BPSW test is
+    Finally if the number is larger than ~2^81, a strong BPSW test is
     performed. While this is a probable prime test and it is believed that
     counterexamples exist, currently there are no known counterexamples.
 
@@ -29,6 +30,20 @@ def is_prime(n: int) -> bool:
         True -- If {n} is (probably) a prime.
         False -- If {n} is not a prime.
     """
+    result = _small_prime_test(n)
+    if result in (True, False):
+        return result
+
+    # Deterministic Miller-Rabin
+    for best_solution, bases in constants.DETERMINISTIC_SOLUTIONS:
+        if n < best_solution:
+            return miller_rabin.is_miller_rabin_prp(n, bases)
+
+    # Baillie-PSW
+    return baillie_psw.is_baillie_psw_prp(n)
+
+
+def _small_prime_test(n: int) -> Union[bool, None]:
     if n in (2, 3, 5):
         return True
     if n < 2 or (n % 2) == 0 or (n % 3) == 0 or (n % 5) == 0:
@@ -57,15 +72,11 @@ def is_prime(n: int) -> bool:
 
     # Testing with known primes under 1000 speeds up the average test time by
     # 50% on 2048 bit numbers.
-    for p in constants.KNOWN_PRIMES:
+    for p in constants.KNOWN_PRIMES_50_TO_1000:
         if n % p == 0:
             return False
 
-    # Deterministic Miller-Rabin for numbers < 2^81 does not need strong
-    # Lucas compositeness testing.
-    return miller_rabin.is_miller_rabin_prp(n) and (
-        n < constants.MAX_DETERMINISTIC or lucas.is_strong_lucas_prp(n)
-    )
+    return None
 
 
 def next_prime(n: int) -> int:

@@ -1,16 +1,17 @@
 """
 https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test
 """
-from . import constants
+from typing import Sequence
 
 
-def is_miller_rabin_prp(n: int) -> bool:
+def is_miller_rabin_prp(n: int, bases: Sequence[int]) -> bool:
     """
     Perform a Miller-Rabin strong pseudoprime test on n.
 
     Returns False if n is definitely composite, and True if n is a probable
     prime.
     """
+
     if n == 2:
         return True
     if n < 2 or (n % 2) == 0:
@@ -18,13 +19,6 @@ def is_miller_rabin_prp(n: int) -> bool:
     d, s = n >> 1, 1
     while d & 1 == 0:
         d, s = d >> 1, s + 1
-
-    for best_solution, bases in constants.DETERMINISTIC_SOLUTIONS:
-        if n < best_solution:
-            break
-    else:
-        bases = (2,)
-        #  bases = (2, random.SystemRandom().randrange(3, n - 1))
 
     for a in bases:
         a = a % n

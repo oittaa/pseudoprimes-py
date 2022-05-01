@@ -51,7 +51,7 @@ def is_extra_strong_lucas_prp(n: int) -> bool:
     for _ in range(1, s):
         if V == 0:
             return True
-        V = (V*V - 2) % n
+        V = (V * V - 2) % n
     return False
 
 
@@ -157,7 +157,7 @@ def _lucas_extrastrong_params(n: int) -> Tuple[int, int, int]:
         if jacobi_symbol(D, n) == -1:
             break
         P += 1
-        D = P*P - 4
+        D = P * P - 4
     return (D, P, Q)
 
 

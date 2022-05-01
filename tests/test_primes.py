@@ -60,6 +60,21 @@ class TestPrimes(unittest.TestCase):
             )
         )
 
+    def test_numbers_until_10k_primes(self) -> None:
+        """
+        The largest number in the file is 104 729.
+        https://primes.utm.edu/lists/small/10000.txt
+        """
+        num = 0
+        with open("tests/10_000_primes.txt", encoding="ascii") as file:
+            for token in read_by_tokens(file):
+                next_prime = int(token)
+                while num < next_prime:
+                    self.assertFalse(pseudoprimes.is_prime(num), num)
+                    num += 1
+                self.assertTrue(pseudoprimes.is_prime(num), num)
+                num += 1
+
     def test_very_large_composite(self) -> None:
         self.assertFalse(
             pseudoprimes.is_prime(

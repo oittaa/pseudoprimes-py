@@ -7,6 +7,54 @@ import math
 from typing import Tuple
 
 
+def is_extra_strong_lucas_prp(n: int) -> bool:
+    """
+    Extra Strong Lucas compositeness test.
+
+    Returns
+    False if n is definitely composite, and True if n is a "extra strong"
+    Lucas probable prime.
+
+    The parameters are selected using P = 3, Q = 1, then incrementing P until
+    (D|n) == -1.  The test itself is as defined in Grantham 2000, from the
+    Mo and Jones preprint.  The parameter selection and test are the same as
+    used in OEIS A217719, Perl's Math::Prime::Util, and the Lucas pseudoprime
+    page on Wikipedia.
+
+    With these parameters, there are no counterexamples below 2^64 nor any
+    known above that range.  It is 20-50% faster than the strong test.
+    Because of the different parameters selected, there is no relationship
+    between the strong Lucas pseudoprimes and extra strong Lucas pseudoprimes.
+    In particular, one is not a subset of the other.
+
+    - OEIS A217719: Extra Strong Lucas Pseudoprimes
+      https://oeis.org/A217719
+    """
+    if n == 2:
+        return True
+    if n < 2 or (n % 2) == 0 or is_square(n):
+        return False
+
+    D, P, Q = _lucas_extrastrong_params(n)
+    if D == 0:
+        return False
+
+    # remove powers of 2 from n+1 (= k * 2**s)
+    k, s = n + 1, 0
+    while k & 1 == 0:
+        k, s = k >> 1, s + 1
+
+    U, V, _Qk = _lucas_sequence(n, P, Q, k)
+
+    if U == 0 and V in (2, n - 2):
+        return True
+    for _ in range(1, s):
+        if V == 0:
+            return True
+        V = (V * V - 2) % n
+    return False
+
+
 def is_strong_lucas_prp(n: int) -> bool:
     """
     Strong Lucas compositeness test with Selfridge parameters.
@@ -63,7 +111,7 @@ def jacobi_symbol(k: int, n: int) -> int:
     while k != 0:
         while k % 2 == 0 and k > 0:
             k >>= 1
-            if n % 8 in [3, 5]:
+            if n % 8 in (3, 5):
                 result = -result
         k, n = n, k
         if k % 4 == n % 4 == 3:
@@ -95,6 +143,22 @@ def _lucas_selfridge_params(n: int) -> Tuple[int, int, int]:
         else:
             D = -D + 2
     return (D, 1, (1 - D) // 4)
+
+
+def _lucas_extrastrong_params(n: int) -> Tuple[int, int, int]:
+    """
+    Calculates the "extra strong" parameters (D, P, Q) for n.
+    """
+    P, Q, D = 3, 1, 5
+    while True:
+        g = math.gcd(D, n)
+        if g > 1 and g != n:
+            return (0, 0, 0)
+        if jacobi_symbol(D, n) == -1:
+            break
+        P += 1
+        D = P * P - 4
+    return (D, P, Q)
 
 
 def _lucas_sequence(  # noqa: C901

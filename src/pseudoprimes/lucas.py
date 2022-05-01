@@ -8,7 +8,9 @@ from typing import Tuple
 
 
 def is_extra_strong_lucas_prp(n: int) -> bool:
-    """Extra Strong Lucas compositeness test.
+    """
+    Extra Strong Lucas compositeness test.
+
     Returns
     False if n is definitely composite, and True if n is a "extra strong"
     Lucas probable prime.

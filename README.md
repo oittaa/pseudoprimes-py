@@ -10,7 +10,7 @@ Test and find prime numbers.
 >>> import pseudoprimes
 >>> pseudoprimes.is_prime(11)
 True
->>> pseudoprimes.is_prime(1022117)
+>>> pseudoprimes.is_prime(1022117)  # 1009*1013
 False
 >>> pseudoprimes.gen_prime(128)  # 128-bit prime
 181872728983755108091298489166590324849

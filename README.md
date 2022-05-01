@@ -28,7 +28,7 @@ pip install pseudoprimes
 
 ## Probabilistic or deterministic?
 
-The used Miller–Rabin algorithm[^1] is deterministic for values up to 3,317,044,064,679,887,385,961,981. Numbers larger than that are tested using a probabilistic primality test[^2].
+The used Miller–Rabin primality test[^1] is deterministic for values up to 3,317,044,064,679,887,385,961,981. Numbers larger than that are tested using a probabilistic Baillie–PSW primality test[^2]. While there are no known composite numbers that pass the test, it's believed they exist.
 
 [^1]: https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test#Deterministic_variants
 [^2]: https://en.wikipedia.org/wiki/Baillie%E2%80%93PSW_primality_test

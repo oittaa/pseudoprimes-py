@@ -30,12 +30,11 @@ def is_prime(n: int) -> bool:
         True -- If {n} is (probably) a prime.
         False -- If {n} is not a prime.
     """
-    result = _small_prime_test(n)
-    if result in (True, False):
+    if (result := _small_prime_test(n)) in (True, False):
         return result
 
     # Deterministic Miller-Rabin
-    for best_solution, bases in constants.DETERMINISTIC_SOLUTIONS:
+    for best_solution, bases in constants.MR_DETERMINISTIC_SOLUTIONS:
         if n < best_solution:
             return miller_rabin.is_miller_rabin_prp(n, bases)
 
@@ -44,9 +43,20 @@ def is_prime(n: int) -> bool:
 
 
 def _small_prime_test(n: int) -> Union[bool, None]:
+    """
+    The point here is just to speedily handle small numbers and many
+    composites. It is completely optional.
+
+    Arguments:
+        {n} integer -- Number to test.
+    Returns:
+        True -- If {n} is a prime.
+        False -- If {n} is not a prime.
+        None -- If {n} is unknown.
+    """
     if n in (2, 3, 5):
         return True
-    if n < 2 or (n % 2) == 0 or (n % 3) == 0 or (n % 5) == 0:
+    if n < 2 or n & 1 == 0 or (n % 3) == 0 or (n % 5) == 0:
         return False
     if n < 49:
         return True
@@ -67,8 +77,8 @@ def _small_prime_test(n: int) -> Union[bool, None]:
         return False
     if n < 2809:
         return True
-    if n <= 23001:
-        return pow(2, n, n) == 2 and n not in (7957, 8321, 13747, 18721, 19951)
+    if n < 31417:
+        return pow(2, n, n) == 2 and n not in (7957, 8321, 13747, 18721, 19951, 23377)
 
     # Testing with known primes under 1000 speeds up the average test time by
     # 50% on 2048 bit numbers.

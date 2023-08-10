@@ -18,6 +18,12 @@ False
 5
 >>> pseudoprimes.prev_prime(100)
 97
+>>> pseudoprimes.get_prime_safe(128)  # 128-bit prime n, (n-1)/2 is also prime
+252855463131468053544728731802559277223
+>>> pseudoprimes.next_prime_safe(11)
+23
+>>> pseudoprimes.prev_prime_safe(100)
+83
 ```
 
 ## Installation

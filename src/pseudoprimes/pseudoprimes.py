@@ -178,3 +178,60 @@ def get_prime(bits: int) -> int:
         value = _RAND.randrange(1 << (bits - 1), 1 << bits) | 1
         if is_prime(value):
             return value
+
+
+def get_prime_safe(bits: int) -> int:
+    """
+    Returns a "safe" prime. If the number generated is n, then check that
+    (n-1)/2 is also prime. bits is the desired length of the prime.
+    Arguments:
+        {bits} integer -- Integer number
+    Raises:
+        ValueError -- Wrong value for {bits} parameter, must be greater than 2.
+    Returns:
+        integer -- The generated "safe" prime.
+    """
+    if bits < 3:
+        raise ValueError(
+            "gen_prime_safe() expects parameter bits to be greater than 2. "
+            "Given: " + str(bits) + "."
+        )
+    while True:
+        value = get_prime(bits)
+        if is_prime(value) and is_prime(value // 2):
+            return value
+
+
+def next_prime_safe(n: int) -> int:
+    """
+    Returns the next "safe" prime number greater than n.
+    Arguments:
+        {n} integer -- Integer number
+    Returns:
+        integer -- The next "safe" prime number greater than n.
+    """
+    while True:
+        n = next_prime(n)
+        if is_prime(n // 2):
+            return n
+
+
+def prev_prime_safe(n: int) -> int:
+    """
+    Returns the previous "safe" prime number less than n. n must be greater than 5.
+    Arguments:
+        {n} integer -- Integer number
+    Raises:
+        ValueError -- Wrong value for {n} parameter, must be greater than 5.
+    Returns:
+        integer -- The previous "safe" prime number less than n.
+    """
+    if n < 6:
+        raise ValueError(
+            "prev_prime_safe() expects parameter n to be greater than 5. "
+            "Given: " + str(n) + "."
+        )
+    while True:
+        n = prev_prime(n)
+        if is_prime(n // 2):
+            return n

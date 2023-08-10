@@ -290,7 +290,7 @@ class TestPrimes(unittest.TestCase):
         with self.assertRaises(ValueError):
             pseudoprimes.prev_prime(2)
 
-    def test_gen_prime_small(self) -> None:
+    def test_get_prime_small(self) -> None:
         results = set()
         for _ in range(100):
             prime = pseudoprimes.get_prime(2)
@@ -298,7 +298,7 @@ class TestPrimes(unittest.TestCase):
             results.add(prime)
         self.assertEqual(len(results), 2)
 
-    def test_gen_prime_large(self) -> None:
+    def test_get_prime_large(self) -> None:
         results = set()
         for _ in range(10):
             prime = pseudoprimes.get_prime(1024)
@@ -307,11 +307,73 @@ class TestPrimes(unittest.TestCase):
             results.add(prime)
         self.assertEqual(len(results), 10)
 
-    def test_gen_prime_invalid_arguments(self) -> None:
+    def test_get_prime_invalid_arguments(self) -> None:
         with self.assertRaises(ValueError):
             pseudoprimes.get_prime(-10)
         with self.assertRaises(ValueError):
             pseudoprimes.get_prime(1)
+
+    def test_next_prime_safe(self) -> None:
+        """
+        The first few safe primes are
+        5, 7, 11, 23, 47, 59, 83, 107, 167, 179, 227
+        """
+        self.assertEqual(pseudoprimes.next_prime_safe(0), 5)
+        self.assertEqual(pseudoprimes.next_prime_safe(3), 5)
+        self.assertEqual(pseudoprimes.next_prime_safe(5), 7)
+        self.assertEqual(pseudoprimes.next_prime_safe(8), 11)
+        self.assertEqual(pseudoprimes.next_prime_safe(24), 47)
+        self.assertEqual(pseudoprimes.next_prime_safe(179), 227)
+        self.assertEqual(
+            [(i, pseudoprimes.next_prime_safe(i)) for i in range(10, 15)],
+            [(10, 11), (11, 23), (12, 23), (13, 23), (14, 23)],
+        )
+        self.assertEqual(
+            [(i, pseudoprimes.next_prime_safe(i)) for i in range(65, 100, 6)],
+            [(65, 83), (71, 83), (77, 83), (83, 107), (89, 107), (95, 107)],
+        )
+        self.assertEqual(pseudoprimes.next_prime_safe(2**32 - 266), 2**32 - 209)
+
+    def test_prev_prime_safe(self) -> None:
+        self.assertEqual(pseudoprimes.prev_prime_safe(6), 5)
+        self.assertEqual(pseudoprimes.prev_prime_safe(10), 7)
+        self.assertEqual(pseudoprimes.prev_prime_safe(100), 83)
+        self.assertEqual(
+            [(i, pseudoprimes.prev_prime_safe(i)) for i in range(10, 15)],
+            [(10, 7), (11, 7), (12, 11), (13, 11), (14, 11)],
+        )
+        self.assertEqual(pseudoprimes.prev_prime_safe(2**64 - 190), 2**64 - 1469)
+
+    def test_prev_prime_safe_invalid_arguments(self) -> None:
+        with self.assertRaises(ValueError):
+            pseudoprimes.prev_prime_safe(-10)
+        with self.assertRaises(ValueError):
+            pseudoprimes.prev_prime_safe(1)
+        with self.assertRaises(ValueError):
+            pseudoprimes.prev_prime_safe(5)
+
+    def test_get_prime_safe_small(self) -> None:
+        results = set()
+        for _ in range(100):
+            prime = pseudoprimes.get_prime_safe(3)
+            self.assertIn(prime, (5, 7))
+            results.add(prime)
+        self.assertEqual(len(results), 2)
+
+    def test_get_prime_safe_large(self) -> None:
+        results = set()
+        for _ in range(5):
+            prime = pseudoprimes.get_prime_safe(128)
+            self.assertGreater(prime, 2**127)
+            self.assertLess(prime, 2**128)
+            results.add(prime)
+        self.assertEqual(len(results), 5)
+
+    def test_get_prime_safe_invalid_arguments(self) -> None:
+        with self.assertRaises(ValueError):
+            pseudoprimes.get_prime_safe(-10)
+        with self.assertRaises(ValueError):
+            pseudoprimes.get_prime_safe(2)
 
 
 if __name__ == "__main__":

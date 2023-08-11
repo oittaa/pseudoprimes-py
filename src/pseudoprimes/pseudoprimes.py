@@ -198,7 +198,7 @@ def get_prime_safe(bits: int) -> int:
         )
     while True:
         value = get_prime(bits)
-        if is_prime(value) and is_prime(value // 2):
+        if is_prime(value // 2):
             return value
 
 

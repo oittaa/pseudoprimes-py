@@ -2,7 +2,6 @@
 https://en.wikipedia.org/wiki/Lucas_pseudoprime
 """
 
-
 import unittest
 
 from pseudoprimes import miller_rabin

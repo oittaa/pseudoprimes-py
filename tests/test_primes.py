@@ -2,7 +2,6 @@
 Test with known values
 """
 
-
 import unittest
 
 import pseudoprimes

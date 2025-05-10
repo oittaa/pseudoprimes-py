@@ -4,7 +4,7 @@ https://en.wikipedia.org/wiki/Lucas_pseudoprime
 """
 
 import math
-from typing import Tuple
+from typing import Dict, Tuple
 
 
 def is_extra_strong_lucas_prp(n: int) -> bool:
@@ -120,10 +120,31 @@ def jacobi_symbol(k: int, n: int) -> int:
     return result
 
 
+# Define the moduli used in GNU MP's perfect square test
+# https://gmplib.org/manual/Perfect-Square-Algorithm
+moduli = (256, 9, 5, 7, 13, 17, 97)
+quadratic_residues: Dict[int, frozenset[int]] = {}
+
+
 def is_square(n: int) -> bool:
     """
     Return True if n == a * a for some integer a, else False.
     """
+    # Handle edge cases
+    if n < 0:
+        return False
+    if n in (0, 1):
+        return True
+
+    # Precompute the set of quadratic residues for each modulus
+    if not quadratic_residues:
+        for m in moduli:
+            quadratic_residues[m] = frozenset((x * x) % m for x in range(m))
+
+    # Perform modulo checks
+    for m in moduli:
+        if (n % m) not in quadratic_residues[m]:
+            return False
     return math.isqrt(n) ** 2 == n
 
 
